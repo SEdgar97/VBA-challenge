@@ -1,0 +1,78 @@
+Sub analysis():
+
+Dim ws As Worksheet
+Dim ticker As String
+Dim vol As Long
+Dim openval As Double
+Dim closeval As Double
+Dim y_change As Double
+Dim p_change As Double
+Dim sum_table As Long
+Dim starting_open As Long
+
+
+For Each ws In ThisWorkbook.Worksheets
+    EndRow = ws.Cells(Rows.Count, 1).End(xlUp).Row
+    starting_open = 2
+    vol = 0
+    ws.Cells(1, 9).Value = "Ticker"
+    ws.Cells(1, 10).Value = "Yearly Change"
+    ws.Cells(1, 11).Value = "Percent Change"
+    ws.Cells(1, 12).Value = "Total Stock Volume"
+
+
+    sum_table = 2
+    
+        For i = 2 To EndRow
+            
+            If ws.Cells(i, 1).Value <> ws.Cells(i + 1, 1).Value Then
+            
+                
+                vol = ws.Cells(i, 7).Value + vol
+                ticker = ws.Cells(i, 1).Value
+                openval = ws.Cells(starting_open, 3).Value
+                closeval = ws.Cells(i, 6).Value
+                y_change = closeval - openval
+                p_change = (y_change) / closeval
+                starting_open = i + 1
+    
+                    
+                ws.Cells(sum_table, 9).Value = ticker
+                ws.Cells(sum_table, 10).Value = y_change
+                ws.Cells(sum_table, 11).Value = p_change
+                ws.Cells(sum_table, 12).Value = vol
+                sum_table = sum_table + 1
+                vol = 0
+                Else
+                    vol = vol + ws.Cells(i, 7).Value
+                
+                
+               End If
+        Next i
+    
+
+
+total_row = ws.Cells(Rows.Count, "I").End(xlUp).Row
+    
+    
+        For x = 2 To total_row
+      
+            If ws.Cells(x, 10).Value >= 0 Then
+      
+                ws.Cells(x, 10).Interior.ColorIndex = 4
+        
+            Else
+      
+                 ws.Cells(x, 10).Interior.ColorIndex = 3
+        
+            End If
+         
+    Next x
+
+ws.Columns("K").NumberFormat = "0.00%"
+ws.Columns("J").NumberFormat = "0.00"
+
+Next ws
+
+
+End Sub
